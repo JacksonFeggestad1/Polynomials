@@ -3,6 +3,8 @@ from numpy import concatenate, zeros, convolve, array
 
 class Polynomial:
     def __init__(self, _coeffs):
+        while(_coeffs[0] == 0):
+            _coeffs = _coeffs[1:]
         self.coeffs = _coeffs       #self.coeffs is a numpy array
         self.deg = len(self.coeffs)-1
 
@@ -49,22 +51,60 @@ class Polynomial:
     
     def to_string(self):
         result = ""
-        for i in range(self.deg):
-            if self.coeffs[i] == 1:
-                if self.deg-i == 1:
-                    result += f'x + '
-                else:
-                    result += f'x^{self.deg-i} + '
-            elif self.coeffs[i] != 0:
-                if self.deg-i == 1:
-                    result += f'{self.coeffs[i]}x + '
-                else:
-                    result += f'{self.coeffs[i]}x^{self.deg-i} + '
-        
-        if self.coeffs[-1] == 0:
-            return result[:-3]
+        if self.coeffs[0] != 1 and self.coeffs[0] != -1:
+            if self.deg > 1:
+                result += f'{self.coeffs[0]}x^{self.deg}'
+            elif self.deg == 1:
+                result += f'{self.coeffs[0]}x'
+            else:
+                result += f'{self.coeffs[0]}'
+        elif self.coeffs[0] == 1:
+            if self.deg > 1:
+                result += f'x^{self.deg}'
+            elif self.deg == 1:
+                result += f'x'
+            else:
+                result += f'1'
         else:
-            return result + f'{self.coeffs[-1]}'
+            if self.deg > 1:
+                result += f'-x^{self.deg}'
+            elif self.deg == 1:
+                result += f'-x'
+            else:
+                result += f'-1'
+
+        for i in range(1,self.deg):
+            if self.deg-i > 1:
+                if self.coeffs[i] > 0:
+                    if self.coeffs[i] == 1:
+                        result += f' + x^{self.deg-i}'
+                    else:
+                        result += f' + {self.coeffs[i]}x^{self.deg-i}'
+                elif self.coeffs[i] < 0:
+                    if self.coeffs[i] == -1:
+                        result += f' - x^{self.deg-i}'
+                    else:
+                        result += f' - {abs(self.coeffs[i])}x^{self.deg-i}'
+            else:
+                if self.coeffs[i] > 0:
+                    if self.coeffs[i] == 1:
+                        result += f' + x'
+                    else:
+                        result += f' + {self.coeffs[i]}x'
+                elif self.coeffs[i] < 0:
+                    if self.coeffs[i] == -1:
+                        result += f' - x'
+                    else:
+                        result += f' - {abs(self.coeffs[i])}x'
+
+            
+        if self.coeffs[-1] != 0 :
+            if self.coeffs[-1] < 0:
+                return result + f' - {abs(self.coeffs[-1])}'
+            else:
+                return result + f' + {self.coeffs[-1]}'
+        
+        return result
     
     # p and q are polynomial objects
     def add(p, q):
