@@ -122,10 +122,10 @@ class Polynomial:
         initials = uniform(-1000,1000,[num_points])
         results = []
         for init in initials:
-            results.append(Polynomial.__newtons_alternate(self, eps, init))
+            results.append(Polynomial.__newtons(self, eps, init))
         return results
     
-    def __newtons_alternate(self, eps, x_0):
+    def __newtons(self, eps, x_0):
         D = self.derivative()
         x_1 = x_0 - self(x_0)/D(x_0)
         count = 0
