@@ -1,5 +1,6 @@
 #import numpy as np 
 from numpy import concatenate, zeros, convolve, array
+from numpy.random import uniform
 
 class Polynomial:
     def __init__(self, _coeffs):
@@ -7,13 +8,13 @@ class Polynomial:
         self.deg = len(self.coeffs)-1
 
     def __add__(self, unself):
-        return Polynomial(Polynomial.add(self.coeffs, unself.coeffs))
+        return Polynomial(Polynomial.__add(self.coeffs, unself.coeffs))
     
     def __sub__(self, unself):
-        return Polynomial(Polynomial.add(self.coeffs, -1*unself.coeffs))
+        return Polynomial(Polynomial.__add(self.coeffs, -1*unself.coeffs))
     
     def __mul__(self, unself):
-        return Polynomial(Polynomial.mult(self.coeffs, unself.coeffs))
+        return Polynomial(Polynomial.__mult(self.coeffs, unself.coeffs))
     
     def __call__(self, x):
         result = 0
@@ -36,7 +37,7 @@ class Polynomial:
     
     def derivative(self):
         new_coeffs = array(self.coeffs[:-1:])
-        for i in range(self.deg + 1):
+        for i in range(self.deg):
             new_coeffs[i] *= (self.deg + 1-i)
         return Polynomial(new_coeffs)
     
@@ -67,12 +68,31 @@ class Polynomial:
             return result + f'{self.coeffs[-1]}'
     
     # p and q are polynomial objects
-    def add(p, q):
+    def __add(p, q):
         if len(q) > len(p):
             p, q = q, p
         if len(p) != len(q):
             q = concatenate((zeros(len(p)-len(q),dtype=int), q))
         return p+q
 
-    def mult(p, q):
+    def __mult(p, q):
         return convolve(p,q, mode='full')
+    
+    def newtons(self, eps = 0.00001, num_points = 1):
+        initials = uniform(-1000,1000,[num_points])
+        results = []
+        for init in initials:
+            results.append(Polynomial.__newtons_alternate(self, eps, init))
+        return results
+    
+    def __newtons_alternate(self, eps, x_0):
+        D = self.derivative()
+        x_1 = x_0 - self(x_0)/D(x_0)
+        count = 0
+        while(abs(x_1-x_0) > eps):
+            x_0 = x_1
+            x_1 = x_0 - self(x_0)/D(x_0)
+            if count > 200:
+                return None
+            count += 1
+        return x_1
