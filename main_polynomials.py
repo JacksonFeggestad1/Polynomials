@@ -12,4 +12,4 @@ for i in range(1,6):
     arr.append(Polynomial(np.array([1.0,-i])))
     
 F = arr[0]*arr[1]*arr[2]*arr[3]*arr[4]
-print(F.newtons(num_points = 10))
+print(F.newtons(num_points = 10, sampling=[1.9,2.1]))

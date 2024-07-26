@@ -118,8 +118,8 @@ class Polynomial:
     def __mult(p, q):
         return convolve(p,q, mode='full')
     
-    def newtons(self, eps = 0.00001, num_points = 1):
-        initials = uniform(-1000,1000,[num_points])
+    def newtons(self, eps = 0.00001, num_points = 1, sampling = [-1000,1000]):
+        initials = uniform(sampling[0],sampling[1],[num_points])
         results = []
         for init in initials:
             results.append(Polynomial.__newtons(self, eps, init))
